@@ -146,8 +146,18 @@
   });
   
   console.log("%c=== AUDIT COMPLETE ===", "font-weight: bold; font-size: 16px; color: green;");
-  console.log(`Pages with /faq/ or /faqs/ in slug (${exactFaqSlugUrls.length}):\n`, exactFaqSlugUrls.join('\n'));
-  console.log(`Pages with FAQ JSON-LD structured data (${pagesWithFaqJsonLd.length}):\n`, pagesWithFaqJsonLd.join('\n'));
+  
+  if (exactFaqSlugUrls.length > 0) {
+    console.log(`%c[YES] FAQ pages were found (${exactFaqSlugUrls.length}):\n`, "color: green; font-weight: bold;", exactFaqSlugUrls.join('\n'));
+  } else {
+    console.log("%c[NO] No FAQ pages were found.", "color: red; font-weight: bold;");
+  }
+
+  if (pagesWithFaqJsonLd.length > 0) {
+    console.log(`%c[YES] Pages with FAQ codes (JSON-LD) were found (${pagesWithFaqJsonLd.length}):\n`, "color: green; font-weight: bold;", pagesWithFaqJsonLd.join('\n'));
+  } else {
+    console.log("%c[NO] No pages with FAQ codes (JSON-LD) were found.", "color: red; font-weight: bold;");
+  }
   
   // Optional CSV Export
   if (confirm("Audit complete! Would you like to export the results to a CSV file?")) {
