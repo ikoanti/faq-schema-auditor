@@ -4,7 +4,7 @@
  * This script is designed to be run in the browser console of any website.
  * It will:
  * 1. Parse the site's /sitemap.xml (including nested sitemaps) to find all URLs.
- * 2. Identify all URLs that contain /faq/ or /faqs/ in their slug.
+ * 2. Identify all URLs that contain /faq/, /faqs/, or /frequently-asked-questions/ in their slug.
  * 3. Give you the option to scan those URLs (or all URLs) for FAQPage JSON-LD structured data.
  * 4. Export the findings to a CSV file.
  */
@@ -46,18 +46,25 @@
   urls = [...new Set(urls)];
   console.log(`%cFound ${urls.length} unique URLs in sitemaps.`, "color: green;");
 
-  // Identify pages with /faq/ or /faqs/ in the slug
+  // Identify pages with /faq/, /faqs/, or /frequently-asked-questions/ in the slug
   const exactFaqSlugUrls = urls.filter(url => {
     try {
         const urlObj = new URL(url, window.location.origin);
-        const path = urlObj.pathname;
-        return path.includes('/faq/') || path.includes('/faqs/') || path.endsWith('/faq') || path.endsWith('/faqs');
+        const path = urlObj.pathname.toLowerCase();
+        return path.includes('/faq/') || 
+               path.includes('/faqs/') || 
+               path.endsWith('/faq') || 
+               path.endsWith('/faqs') ||
+               path.includes('/frequently-asked-questions/') ||
+               path.endsWith('/frequently-asked-questions') ||
+               path.includes('/frequently-assked-questions/') ||
+               path.endsWith('/frequently-assked-questions');
     } catch(e) {
         return false; // ignore invalid URLs
     }
   });
 
-  console.log(`%cFound ${exactFaqSlugUrls.length} pages with /faq/ or /faqs/ in the slug:`, "color: #ff9900;", exactFaqSlugUrls);
+  console.log(`%cFound ${exactFaqSlugUrls.length} pages with FAQ or frequently-asked-questions in the slug:`, "color: #ff9900;", exactFaqSlugUrls);
 
   if (urls.length === 0) {
     console.error("No URLs found in sitemap. Ensure the site has a standard /sitemap.xml file.");
@@ -65,7 +72,7 @@
   }
 
   // 2. Check pages for JSON-LD FAQ structured data
-  const checkLimit = confirm(`Found ${urls.length} total URLs.\n\nDo you want to scan ALL ${urls.length} pages for FAQ JSON-LD?\n\n[OK] = Scan ALL pages (may take a while depending on site size).\n[Cancel] = Scan ONLY the ${exactFaqSlugUrls.length} pages with 'faq' in the slug.`);
+  const checkLimit = confirm(`Found ${urls.length} total URLs.\n\nDo you want to scan ALL ${urls.length} pages for FAQ JSON-LD?\n\n[OK] = Scan ALL pages (may take a while depending on site size).\n[Cancel] = Scan ONLY the ${exactFaqSlugUrls.length} pages with 'faq' or 'frequently-asked-questions' in the slug.`);
   
   const urlsToScan = checkLimit ? urls : exactFaqSlugUrls;
   
